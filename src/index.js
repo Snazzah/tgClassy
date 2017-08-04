@@ -1,0 +1,156 @@
+const tgfancy = require("tgfancy");
+const Structures = require("./Structures");
+const { Collection } = require("./Utils");
+const { ButtonCaller, ButtonBuilder, InlineResultBuilder, KeyboardBuilder, Constants } = require("./Interfaces");
+const EventEmitter = require('eventemitter3');
+const camelize = string => string.replace(/_\w/g, m => m[1].toUpperCase());
+
+const nonUpdatingTypes = ['text', 'audio', 'document', 'photo', 'sticker', 'video', 'voice', 'contact', 'location'];
+const updatingTypes = [
+	'message', 'edited_message', 'edited_message_text', 'edited_message_caption',
+	'channel_post', 'edited_channel_post', 'edited_channel_post_text', 'edited_channel_post_caption'
+];
+const serviceMessageProperties = [
+	'new_chat_participant', 'left_chat_participant', 'new_chat_title',
+	'new_chat_photo', 'delete_chat_photo', 'group_chat_created', 'supergroup_chat_created',
+	'channel_chat_created', 'migrate_to_chat_id', 'migrate_from_chat_id', 'pinned_message',
+	'new_chat_member', 'left_chat_member'
+];
+
+class ClassyTelegramBot extends EventEmitter {
+	constructor(token, options){
+		super();
+		if(options.callbackAnswerTimeout === undefined) options.callbackAnswerTimeout = 300000; // 5 minutes
+		this.fancy = new tgfancy(token, options);
+		this.buttonCaller = new ButtonCaller(this);
+		this.chats = new Collection();
+		this.users = new Collection();
+		this.stickerSets = new Collection();
+		this.messages = new Collection();
+		this._textRegexpCallbacks = new Collection();
+		this.me = null;
+		this.fetchMe();
+
+		updatingTypes.forEach(type => this.fancy.on(type, message => {
+			let m = new Structures.Message(message, this);
+			if(serviceMessageProperties.map(prop => message[prop] !== undefined).includes(true)){
+				m = new Structures.ServiceMessage(message, this);
+			}
+			this.messages.set(m.id, m);
+			this._textRegexpCallbacks.array().some(reg => {
+				console.log(reg);
+				const result = reg.regexp.exec(message.text);
+				if (!result) return false;
+				reg.callback(message, result);
+				return this.options.onlyFirstMatch;
+			});
+			this.emit(camelize(type), m);
+		}));
+		nonUpdatingTypes.forEach(type => this.fancy.on(type, message => this.emit(camelize(type), new Structures.Message(message, this))));
+		this.fancy.on('callback_query', message => this.emit('callbackQuery', new Structures.CallbackQuery(message, this)));
+		this.fancy.on('inline_query', message => this.emit('inlineQuery', new Structures.InlineQuery(message, this)));
+		this.fancy.on('chosen_inline_result', message => this.emit('chosenInlineResult', new Structures.ChosenInlineResult(message, this)));
+	}
+
+	get structures(){
+		return Structures;
+	}
+
+	onTalk(regexp, callback){
+		return this._textRegexpCallbacks.set(callback, { regexp, callback });
+	}
+
+	unhook(callback){
+		return this._textRegexpCallbacks.delete(callback);
+	}
+
+	fetchMe() {
+		return new Promise((resolve, reject) => {
+			this.fancy.getMe().then(user => {
+				this.me = new Structures.User(user, this);
+				resolve(this.me);
+			}).catch(reject);
+		});
+	}
+
+	createNewStickerSet(name, title, sticker, containsMasks = false) {
+		return new Promise((resolve, reject) => {
+			const sendData = this.fancy._formatSendData('sticker', sticker.file);
+			this.fancy._request('createNewStickerSet', {
+				qs: {
+					user_id: this.me.id,
+					name: `${name}_by_${this.me.username}`,
+					title: title,
+					contains_masks: containsMasks,
+					emojis: sticker.emojis,
+					png_sticker: sendData[1],
+					mask_position: sticker.mask_position._data || sticker.mask_position
+				},
+				formData: sendData[0]
+			}).then(resolve).catch(reject);
+		});
+	}
+
+	pinChatMessage(chatid, messageid, disablenotif) {
+		return this.fancy._request('pinChatMessage', {
+			qs: {
+				chat_id: chatid,
+				message_id: messageid,
+				disable_notification: disablenotif
+			}
+		});
+	}
+
+	unpinChatMessage(chatid) {
+		return this.fancy._request('unpinChatMessage', { qs: { chat_id: chatid } });
+	}
+
+	fetchStickerSet(name) {
+		return new Promise((resolve, reject) => {
+			this.fancy._request('getStickerSet', {
+				qs: { name: name }
+			}).then(data => {
+				resolve(new Structures.StickerSet(data, this));
+			}).catch(reject);
+		});
+	}
+
+	fetchChat(id) {
+		return new Promise((resolve, reject) => {
+			this.fancy.getChat(id).then(data => {
+				resolve(new Structures.Chat(data, this));
+			}).catch(reject);
+		});
+	}
+
+	fetchFile(id) {
+		return new Promise((resolve, reject) => {
+			this.fancy.getFile(id).then(data => {
+				resolve(new Structures.File(data, this));
+			}).catch(reject);
+		});
+	}
+
+	fetchWebHookInfo(){
+		return this.fancy.getWebHookInfo();
+	}
+
+	// Mirror tgFancy functions
+
+	processUpdate(update){ return this.fancy.processUpdate(update); }
+	getUpdates(form){ return this.fancy.getUpdates(form); }
+	setWebHook(url, options){ return this.fancy.setWebHook(url, options); }
+	hasOpenWebHook(){ return this.fancy.hasOpenWebHook(); }
+	closeWebHook(){ return this.fancy.closeWebHook(); }
+	openWebHook(){ return this.fancy.openWebHook(); }
+	isPolling(){ return this.fancy.isPolling(); }
+	stopPolling(){ return this.fancy.stopPolling(); }
+	initPolling(){ return this.fancy.initPolling(); }
+	startPolling(options){ return this.fancy.startPolling(options); }
+}
+
+module.exports = ClassyTelegramBot;
+module.exports.Constants = Constants;
+module.exports.ButtonBuilder = ButtonBuilder;
+module.exports.InlineResultBuilder = InlineResultBuilder;
+module.exports.KeyboardBuilder = KeyboardBuilder;

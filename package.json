@@ -1,0 +1,27 @@
+{
+  "name": "tgclassy",
+  "version": "1.0.0",
+  "description": "A wrapper for the Telegram Bot API",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SnazzyPine25/tgClassy.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "api"
+  ],
+  "author": "Snazzah <snazzah@discorddungeons.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SnazzyPine25/tgClassy/issues"
+  },
+  "homepage": "https://github.com/SnazzyPine25/tgClassy#readme",
+  "dependencies": {
+    "tgfancy": "^0.10.0"
+  }
+}
