@@ -73,26 +73,49 @@ class ClassyTelegramBot extends EventEmitter {
 		});
 	}
 
-	createNewStickerSet(name, title, sticker, containsMasks = false) {
-		return new Promise((resolve, reject) => {
+	createNewStickerSet(name, owner, title, sticker, containsMasks = false) {
+		let data = {
+			qs: {
+				user_id: owner.id,
+				name: `${name}_by_${this.me.username}`,
+				title: title,
+				contains_masks: containsMasks,
+				emojis: sticker.emojis,
+				mask_position: sticker.mask_position
+			}
+		}
+		try{
 			const sendData = this.fancy._formatSendData('sticker', sticker.file);
-			this.fancy._request('createNewStickerSet', {
+			data.formData = sendData[0];
+			data.qs.png_sticker = sendData[1];
+		}catch(e){
+			return Promise.reject(e);
+		}
+		return this._request('createNewStickerSet', data);
+	}
+
+	uploadStickerFile(sticker, owner) {
+		return new Promise((resolve, reject) => {
+			let data ={
 				qs: {
-					user_id: this.me.id,
-					name: `${name}_by_${this.me.username}`,
-					title: title,
-					contains_masks: containsMasks,
-					emojis: sticker.emojis,
-					png_sticker: sendData[1],
-					mask_position: sticker.mask_position._data || sticker.mask_position
-				},
-				formData: sendData[0]
-			}).then(resolve).catch(reject);
+					user_id: owner.id
+				}
+			}
+			try{
+				const sendData = this._formatSendData('sticker', sticker);
+				data.formData = sendData[0];
+				data.qs.png_sticker = sendData[1];
+			}catch(e){
+				return reject(e);
+			}
+			this._request('uploadStickerFile', data).then(file => {
+				resolve(new Structures.File(file, this));
+			}).catch(reject);
 		});
 	}
 
 	pinChatMessage(chatid, messageid, disablenotif) {
-		return this.fancy._request('pinChatMessage', {
+		return this._request('pinChatMessage', {
 			qs: {
 				chat_id: chatid,
 				message_id: messageid,
@@ -102,12 +125,12 @@ class ClassyTelegramBot extends EventEmitter {
 	}
 
 	unpinChatMessage(chatid) {
-		return this.fancy._request('unpinChatMessage', { qs: { chat_id: chatid } });
+		return this._request('unpinChatMessage', { qs: { chat_id: chatid } });
 	}
 
 	fetchStickerSet(name) {
 		return new Promise((resolve, reject) => {
-			this.fancy._request('getStickerSet', {
+			this._request('getStickerSet', {
 				qs: { name: name }
 			}).then(data => {
 				resolve(new Structures.StickerSet(data, this));
@@ -133,6 +156,16 @@ class ClassyTelegramBot extends EventEmitter {
 
 	fetchWebHookInfo(){
 		return this.fancy.getWebHookInfo();
+	}
+
+	_request(endpoint, opts){
+		return new Promise((resolve, reject) => {
+			this.fancy._request(endpoint, opts).then(resolve).catch(e => {
+				if(e.response && e.response.statusCode === 429){
+					setTimeout(()=>{this._request(endpoint, opts).then(resolve).catch(reject)}, 20000);
+				}else reject(e);
+			})
+		});
 	}
 
 	// Mirror tgFancy functions

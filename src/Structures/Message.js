@@ -52,7 +52,7 @@ class Message {
 	}
 
 	delete() {
-		return this.bot.fancy._request('deleteMessage', { qs: { chat_id: this.chat.id, message_id: this.id } });
+		return this.bot._request('deleteMessage', { qs: { chat_id: this.chat.id, message_id: this.id } });
 	}
 
 	forward(chat, disablenotif) {

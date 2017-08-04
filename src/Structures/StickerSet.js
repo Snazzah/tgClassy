@@ -10,18 +10,23 @@ class StickerSet {
 		this.bot.stickerSets.set(this.name, this);
 	}
 
-	addSticker(sticker){
-		const sendData = this.bot.fancy._formatSendData('sticker', sticker.file);
-		return this.bot.fancy._request('addStickerToSet', {
+	addSticker(sticker, owner){
+		let data = {
 			qs: {
-				user_id: this.bot.me.id,
+				user_id: owner.id,
 				name: this.name,
 				emojis: sticker.emojis,
-				png_sticker: sendData[1],
-				mask_position: sticker.mask_position._data || sticker.mask_position
-			},
-			formData: sendData[0]
-		});
+				mask_position: sticker.mask_position
+			}
+		}
+		try{
+			const sendData = this.bot.fancy._formatSendData('sticker', sticker.file);
+			data.formData = sendData[0];
+			data.qs.png_sticker = sendData[1];
+		}catch(e){
+			return Promise.reject(e);
+		}
+		return this.bot._request('addStickerToSet', data);
 	}
 }
 

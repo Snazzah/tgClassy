@@ -40,7 +40,7 @@ class ChatMember {
 		data.qs.until = until instanceof Date ? until.valueOf() : until;
 		data.qs.chat_id = this.chat.id;
 		data.qs.user_id = this.user.id;
-		return this.bot.fancy._request('restrictChatMember', data);
+		return this.bot._request('restrictChatMember', data);
 	}
 
 	promote(until, perms) {
@@ -49,7 +49,7 @@ class ChatMember {
 		};
 		data.qs.chat_id = this.chat.id;
 		data.qs.user_id = this.user.id;
-		return this.bot.fancy._request('promoteChatMember', data);
+		return this.bot._request('promoteChatMember', data);
 	}
 }
 

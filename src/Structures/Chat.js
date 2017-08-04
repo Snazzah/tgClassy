@@ -165,25 +165,25 @@ class Chat {
 	}
 
 	setTitle(title) {
-		return this.bot.fancy._request('setChatTitle', { qs: { chat_id: this.id, title: title } });
+		return this.bot._request('setChatTitle', { qs: { chat_id: this.id, title: title } });
 	}
 
 	setDescription(description) {
-		return this.bot.fancy._request('setChatDescription', { qs: { chat_id: this.id, description: description } });
+		return this.bot._request('setChatDescription', { qs: { chat_id: this.id, description: description } });
 	}
 
 	deletePhoto() {
-		return this.bot.fancy._request('deleteChatPhoto', { qs: { chat_id: this.id } });
+		return this.bot._request('deleteChatPhoto', { qs: { chat_id: this.id } });
 	}
 
 	setPhoto(photo) {
 		photo = photo.id || photo;
 		const sendData = this.bot.fancy._formatSendData('photo', photo);
-		return this.bot.fancy._request('setChatPhoto', { qs: { chat_id: this.id, photo: sendData[1] }, formData: sendData[0] });
+		return this.bot._request('setChatPhoto', { qs: { chat_id: this.id, photo: sendData[1] }, formData: sendData[0] });
 	}
 
 	exportInviteLink() {
-		return this.bot.fancy._request('exportChatInviteLink', { qs: { chat_id: this.id } });
+		return this.bot._request('exportChatInviteLink', { qs: { chat_id: this.id } });
 	}
 }
 

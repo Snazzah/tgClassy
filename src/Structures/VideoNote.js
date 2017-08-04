@@ -17,7 +17,7 @@ class VideoNote extends File {
 			}
 			data.qs.chat_id = chat.id,
 			data.qs.video_note = this.id
-			this.bot.fancy._request('sendVideoNote', {
+			this.bot._request('sendVideoNote', {
 				qs: {
 					chat_id: chat.id,
 					video_note: this.id

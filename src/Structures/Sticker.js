@@ -17,7 +17,7 @@ class Sticker extends PhotoSize {
 
 	fetchSet(){
 		return new Promise((resolve, reject) => {
-			this.bot.fancy._request('getStickerSet', {
+			this.bot._request('getStickerSet', {
 				qs: {
 					name: this.setName
 				}
@@ -28,11 +28,11 @@ class Sticker extends PhotoSize {
 	}
 
 	delete(){
-		return this.bot.fancy._request('deleteStickerFromSet', { qs: { sticker: super.id } });
+		return this.bot._request('deleteStickerFromSet', { qs: { sticker: super.id } });
 	}
 
 	setPosition(position){
-		return this.bot.fancy._request('setStickerPositionInSet', { qs: { sticker: super.id, position: position } });
+		return this.bot._request('setStickerPositionInSet', { qs: { sticker: super.id, position: position } });
 	}
 }
 
