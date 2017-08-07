@@ -1,9 +1,20 @@
+# 1.3.2
+
+Added:
+- Chat.sendAction
+
+Bug fixes
+
+### Commits:
+https://github.com/SnazzyPine25/tgClassy/commit/02f59739972f272062018bccf6ecac5f35eeadb9
+https://github.com/SnazzyPine25/tgClassy/commit/292d65a2158117406b26231564989570609e9cbd
+
 # 1.3.1
 
 Bug fixes
 
 ### Commits:
-https://github.com/SnazzyPine25/tgClassy/commit/ec8f9d48de22413b02b0eaebd680c710076017d6
+https://github.com/SnazzyPine25/tgClassy/commit/0a0f0cf09aedd86a0d0ba8168cfe44a58cb6f210
 
 # 1.3.0
 
