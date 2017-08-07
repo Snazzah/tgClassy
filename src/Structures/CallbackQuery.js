@@ -14,7 +14,7 @@ class CallbackQuery {
 		this.data = data.data;
 		this.gameShortName = data.game_short_name;
 
-		if(bot.fancy.options.callbackAnswerTimeout){
+		if(bot.fancy.options.callbackAnswerTimeout || bot.fancy.options.callbackAnswerTimeout !== 0){
 			this.timeout = setTimeout(this.answer.bind(this), bot.fancy.options.callbackAnswerTimeout)
 		}
 	}
