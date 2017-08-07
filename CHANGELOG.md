@@ -1,3 +1,10 @@
+# 1.3.3
+
+Bug fixes
+
+### Commits:
+https://github.com/SnazzyPine25/tgClassy/commit/aa42c4473a4e73c80b4488422a0d3d76aa8a87e1
+
 # 1.3.2
 
 Added:
