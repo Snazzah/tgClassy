@@ -1,5 +1,6 @@
 const ChatMember = require("./ChatMember");
 const Message = require("./Message");
+const ChatPhoto = require("./ChatPhoto");
 
 const Parser = require("../Utils/Parser");
 
@@ -13,6 +14,7 @@ class Chat {
 		this.firstName = data.first_name;
 		this.lastName = data.last_name;
 		this.allMembersAreAdministrators = data.all_members_are_administrators;
+		this.photo = new ChatPhoto(this.photo, bot, this);
 
 		bot.chats.set(this.id, this);
 	}
@@ -103,6 +105,16 @@ class Chat {
 		return new Promise((resolve, reject) => {
 			photo = photo.id || photo;
 			this.bot.fancy.sendPhoto(this.id, photo, Parser.parseMessageOptions(options)).then(m => {
+				resolve(Parser.parseMessageSendResponse(m, this.bot));
+			}).catch(reject);
+		});
+	}
+
+	sendGame(user, name, options = {}){
+		return new Promise((resolve, reject) => {
+			user = user.id || user;
+			options.user_id = user;
+			this.bot.fancy.sendGame(this.id, name, Parser.parseGameSendOptions(options)).then(m => {
 				resolve(Parser.parseMessageSendResponse(m, this.bot));
 			}).catch(reject);
 		});

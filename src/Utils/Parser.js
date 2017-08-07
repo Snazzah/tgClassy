@@ -13,6 +13,32 @@ Parser = module.exports = {
 		}
 		return Parser.parseEditMessageOptions(options);
 	},
+	parseGameSendOptions: options => {
+		if(!options) return options;
+		if(options.replyTo){
+			options.reply_to_message_id = options.replyTo.id;
+			delete options.replyTo;
+		}
+		if(options.replyMarkup){
+			options.reply_markup = options.replyMarkup;
+			if(options.reply_markup === "remove") options.reply_markup = { keyboard_remove: true };
+			if(options.reply_markup === "remove_selective") options.reply_markup = { keyboard_remove: true, selective: true };
+			delete options.replyMarkup;
+		}
+		if(options.disableNotification){
+			options.disable_notification = options.disableNotification;
+			delete options.disableNotification;
+		}
+		return options;
+	},
+	parseGameSetScoreOptions: options => {
+		if(!options) return options;
+		if(options.disableEditMessage){
+			options.disable_edit_message = options.disableEditMessage;
+			delete options.disableEditMessage;
+		}
+		return options;
+	},
 	parseMessageSendResponse: (message, bot) => {
 		if(message instanceof Array){
 			return message.map(m => new bot.structures.Message(m, bot));
