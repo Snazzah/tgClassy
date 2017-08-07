@@ -60,7 +60,7 @@ class Message {
 	}
 
 	reply(message, options) {
-		return this.chat.send((this.chat.type === "private" ? "" : `@${message.user.username}, `)+message, options);
+		return this.chat.send((this.chat.type === "private" ? "" : `@${this.user.username}, `)+message, options);
 	}
 
 	edit(text, options) {
