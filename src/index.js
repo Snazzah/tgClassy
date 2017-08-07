@@ -17,18 +17,50 @@ const serviceMessageProperties = [
 	'new_chat_member', 'left_chat_member'
 ];
 
+/**
+ * Represents a telegram bot.
+ * @constructor
+ * @param {string} token - The token needed to log into the bot.
+ * @param {string} options - The additional options.
+ */
 class ClassyTelegramBot extends EventEmitter {
 	constructor(token, options){
 		super();
 		if(options.callbackAnswerTimeout === undefined) options.callbackAnswerTimeout = 300000; // 5 minutes
 		this.fancy = new tgfancy(token, options);
 		this.buttonCaller = new ButtonCaller(this);
+
+		/**
+		 * Cached chats
+		 * @type {Collection<number, Chat>}
+		 */
 		this.chats = new Collection();
+
+		/**
+		 * Cached users
+		 * @type {Collection<number, User>}
+		 */
 		this.users = new Collection();
+
+		/**
+		 * Cached stickerSets
+		 * @type {Collection<number, StickerSet>}
+		 */
 		this.stickerSets = new Collection();
+
+		/**
+		 * Cached messages
+		 * @type {Collection<number, StickerSet>}
+		 */
 		this.messages = new Collection();
+
 		this._textRegexpCallbacks = new Collection();
-		this.me = null;
+
+		/**
+		 * The bot's user object, can be undefined if the request isn't finished.
+		 * @type {?User}
+		 */
+		this.me = undefined;
 		this.fetchMe();
 
 		updatingTypes.forEach(type => this.fancy.on(type, message => {
@@ -41,7 +73,7 @@ class ClassyTelegramBot extends EventEmitter {
 				console.log(reg);
 				const result = reg.regexp.exec(message.text);
 				if (!result) return false;
-				reg.callback(message, result);
+				reg.callback(m, result);
 				return this.options.onlyFirstMatch;
 			});
 			this.emit(camelize(type), m);
@@ -56,14 +88,28 @@ class ClassyTelegramBot extends EventEmitter {
 		return Structures;
 	}
 
-	onTalk(regexp, callback){
+	/**
+	 * Match RegExp to incoming messages
+	 * @param {RegExp} regexp The regexp to match
+	 * @param {function} callback The callback to the message
+	 */
+	onText(regexp, callback){
 		return this._textRegexpCallbacks.set(callback, { regexp, callback });
 	}
 
+	/**
+	 * Unhook callbacks added with onTalk
+	 * @param {function} callback The callback to the message
+	 */
 	unhook(callback){
 		return this._textRegexpCallbacks.delete(callback);
 	}
 
+	/**
+	 * Returns basic information about the bot in form of a `User` object.
+	 * @return {Promise<User>}
+	 * @see https://core.telegram.org/bots/api#getme
+	 */
 	fetchMe() {
 		return new Promise((resolve, reject) => {
 			this.fancy.getMe().then(user => {

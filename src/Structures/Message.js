@@ -59,6 +59,10 @@ class Message {
 		return this.bot.fancy.forwardMessage(chat.id, this.chat.id, this.id, { disable_notification: disablenotif });
 	}
 
+	reply(message, options) {
+		return this.chat.send((this.chat.private ? "" : `@${message.user.username}, `)+message, options);
+	}
+
 	edit(text, options) {
 		options = Parser.parseEditMessageOptions(options);
 		options.chat_id = this.chat.id;
