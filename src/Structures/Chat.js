@@ -101,7 +101,7 @@ class Chat {
 		 * The chat photo. Returned only in getChat.
 		 * @type {?ChatPhoto}
 		 */
-		this.photo = new ChatPhoto(this.photo, bot, this);
+		this.photo = this.photo ? new ChatPhoto(this.photo, bot, this) : null;
 
 		bot.chats.set(this.id, this);
 	}
