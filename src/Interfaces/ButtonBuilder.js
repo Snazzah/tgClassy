@@ -28,16 +28,6 @@ class ButtonBuilder {
 		return this;
 	}
 
-	setText(text){
-		this.text = text;
-		return this;
-	}
-
-	setUrl(url){
-		this.url = url;
-		return this;
-	}
-
 	setCallbackData(callbackData){
 		this.callbackData = callbackData;
 		return this;

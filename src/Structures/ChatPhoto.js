@@ -7,11 +7,11 @@ class ChatPhoto {
 	}
 
 	fetchBigFile(){
-		return bot.fetchFile(this.bigFileID);
+		return this.bot.fetchFile(this.bigFileID);
 	}
 
 	fetchSmallFile(){
-		return bot.fetchFile(this.smallFileID);
+		return this.bot.fetchFile(this.smallFileID);
 	}
 }
 

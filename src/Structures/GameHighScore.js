@@ -1,5 +1,6 @@
 const User = require("./User");
 const Message = require("./Message");
+const InlineMessage = require("./InlineMessage");
 
 const Parser = require("../Utils/Parser");
 

@@ -4,6 +4,7 @@ const resultTypes = [
 	'contact', 'game'
 ]
 
+/* jshint undef: false */
 Parser = module.exports = {
 	parseMessageOptions: options => {
 		if(!options) return options;

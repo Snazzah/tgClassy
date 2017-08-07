@@ -1,5 +1,4 @@
 const ChatMember = require("./ChatMember");
-const Message = require("./Message");
 const ChatPhoto = require("./ChatPhoto");
 
 const Parser = require("../Utils/Parser");
