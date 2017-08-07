@@ -123,6 +123,21 @@ class Chat {
 	}
 
 	/**
+	 * Send chat action.
+	 * `typing` for text messages,
+	 * `upload_photo` for photos, `record_video` or `upload_video` for videos,
+	 * `record_audio` or `upload_audio` for audio files, `upload_document` for general files,
+	 * `find_location` for location data.
+	 *
+	 * @param {string} action Type of action to broadcast.
+	 * @return {Promise}
+	 * @see https://core.telegram.org/bots/api#sendmessage
+	 */
+	sendAction(action){
+		return this.bot.fancy.sendChatAction(this.id, action)
+	}
+
+	/**
 	 * Sends an audio file to the chat.
 	 * @param {Audio|String|stream.Stream|Buffer} audio A file path, Stream or Buffer.
 	 * Can also be a `file_id` previously uploaded.
