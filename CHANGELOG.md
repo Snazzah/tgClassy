@@ -1,3 +1,13 @@
+# 1.3.4
+
+Added:
+- MessageEntity.text
+
+Bug fixes
+
+### Commits:
+https://github.com/SnazzyPine25/tgClassy/commit/58756176a801188a4ce36144dd7b60dfc90516bc
+
 # 1.3.3
 
 Bug fixes
