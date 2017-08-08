@@ -15,7 +15,7 @@ class User {
 	fetchUserProfilePhotos(options){
 		return new Promise((resolve, reject) => {
 			this.bot.fancy.getUserProfilePhotos(this.id, options).then(set => {
-				resolve(new UserProfilePhotos(set));
+				resolve(new UserProfilePhotos(set, this.bot));
 			}).catch(reject);
 		});
 	}

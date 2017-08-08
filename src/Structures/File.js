@@ -37,11 +37,7 @@ class File {
 	 * @see https://core.telegram.org/bots/api#getfile
 	 */
 	fetchUrl() {
-	    return new Promise((resolve, reject) => {
-			this.bot.fancy.getFileLink(this.id).then(url => {
-				resolve(url);
-			}).catch(reject);
-		});
+	    return this.bot.fancy.getFileLink(this.id);
 	}
 
 	/**
@@ -51,11 +47,7 @@ class File {
 	 * @see https://github.com/yagop/node-telegram-bot-api/blob/release/src/telegram.js#L980
 	 */
 	download(path) {
-	    return new Promise((resolve, reject) => {
-			this.bot.fancy.downloadFile(this.id, path).then(res => {
-				resolve(res);
-			}).catch(reject);
-		});
+	    return this.bot.fancy.downloadFile(this.id, path);
 	}
 }
 
