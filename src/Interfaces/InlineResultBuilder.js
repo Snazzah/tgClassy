@@ -48,7 +48,7 @@ class InlineResultBuilder {
 	}
 
 	answer(){
-		let answer = this._unravel;
+		let answer = this.build();
 		return this.bot.fancy.answerInlineQuery(this.iq.id, answer.results, answer)
 	}
 
