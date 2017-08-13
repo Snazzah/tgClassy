@@ -5,9 +5,6 @@ class InlineResultBuilder {
 		this.iq = inlinequery;
 		this.bot = inlinequery.bot;
 		this.results = [];
-		this.cacheTime = 300;
-		this.isPersonal = false;
-		this.switchPMText = false;
 	}
 
 	addResult(result){
